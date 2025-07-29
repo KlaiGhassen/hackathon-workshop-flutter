@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, StreamableFile, NotFoundException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { extname, join } from 'path';
+import { createReadStream } from 'fs';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
 import { HackathonService } from './hackathon.service';
 import { CreateHackathonDto } from './dto/create-hackathon.dto';
@@ -102,11 +103,34 @@ export class HackathonController {
     return this.hackathonService.participate(id, participationDto.userId);
   }
 
+  @Get('image/:filename')
+  @ApiOperation({ summary: 'Get hackathon image by filename' })
+  @ApiParam({ name: 'filename', description: 'Image filename', example: '230b5bef3addc32e3101fe73858a49dd1.webp' })
+  @ApiResponse({ status: 200, description: 'Image file' })
+  @ApiResponse({ status: 404, description: 'Image not found' })
+  getImage(@Param('filename') filename: string): StreamableFile {
+    try {
+      const file = createReadStream(join(process.cwd(), 'uploads', filename));
+      return new StreamableFile(file);
+    } catch (error) {
+      throw new NotFoundException('Image not found');
+    }
+  }
+
   @Get()
   @ApiOperation({ summary: 'Get all hackathons' })
   @ApiResponse({ status: 200, description: 'List of all hackathons', type: [Hackathon] })
-  findAll(): Promise<Hackathon[]> {
-    return this.hackathonService.findAll();
+  async findAll(): Promise<Hackathon[]> {
+    const hackathons = await this.hackathonService.findAll();
+    const baseUrl = process.env.API_BASE_URL || 'http://localhost:3000';
+    
+    return hackathons.map(hackathon => {
+      const hackathonObj = (hackathon as any).toObject ? (hackathon as any).toObject() : hackathon;
+      return {
+        ...hackathonObj,
+        image: hackathonObj.image ? `${baseUrl}/hackathon/image/${hackathonObj.image.split('/').pop()}` : null
+      };
+    });
   }
 
   @Get(':id')
@@ -114,8 +138,15 @@ export class HackathonController {
   @ApiParam({ name: 'id', description: 'Hackathon ID', example: '64f8a1b2c3d4e5f6a7b8c9d0' })
   @ApiResponse({ status: 200, description: 'Hackathon found', type: Hackathon })
   @ApiResponse({ status: 404, description: 'Hackathon not found' })
-  findOne(@Param('id') id: string): Promise<Hackathon> {
-    return this.hackathonService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<Hackathon> {
+    const hackathon = await this.hackathonService.findOne(id);
+    const baseUrl = process.env.API_BASE_URL || 'http://localhost:3000';
+    
+    const hackathonObj = (hackathon as any).toObject ? (hackathon as any).toObject() : hackathon;
+    return {
+      ...hackathonObj,
+      image: hackathonObj.image ? `${baseUrl}/hackathon/image/${hackathonObj.image.split('/').pop()}` : null
+    };
   }
 
   @Patch(':id')
