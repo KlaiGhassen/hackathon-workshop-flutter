@@ -8,7 +8,7 @@ import { databaseConfig } from './config/database.config';
 
 @Module({
   imports: [MongooseModule.forRoot(databaseConfig.uri), UsersModule, HackathonModule],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
