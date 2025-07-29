@@ -24,7 +24,7 @@ db.users.insertOne({
 db.hackathons.insertOne({
   title: "Sample Hackathon",
   description: "This is a sample hackathon for testing",
-  image: "/uploads/sample.jpg",
+  image: "/uploads/230b5bef3addc32e3101fe73858a49dd1.webp",
   status: "upcoming",
   participants: [],
   createdAt: new Date(),
