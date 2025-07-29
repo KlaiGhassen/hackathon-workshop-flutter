@@ -36,7 +36,7 @@ services:
       PORT: 3000
       MONGODB_URI: mongodb://admin:password123@mongodb:27017/hackathon?authSource=admin
     ports:
-      - "3000:3000"
+      - "3005:3000"
     volumes:
       - uploads_data:/app/uploads
     depends_on:
