@@ -30,8 +30,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('hackathons', 'Hackathon management endpoints')
     .addTag('users', 'User management endpoints')
-    .addServer('https://espritmobile.com/hackathon', 'Production API (via nginx)')
-    .addServer('http://localhost:3005/api', 'Direct API access')
+    .addServer('https://espritmobile.com/api-hackathon', 'Production API (via nginx)')
     .build();
   
   const document = SwaggerModule.createDocument(app, config);
