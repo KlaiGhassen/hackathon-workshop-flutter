@@ -16,7 +16,8 @@ async function bootstrap() {
     credentials: true,
   });
   
- 
+  // Set global prefix to match nginx proxy_pass
+  app.setGlobalPrefix('api');
   
   app.useGlobalPipes(new ValidationPipe());
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
@@ -31,7 +32,7 @@ async function bootstrap() {
     .addTag('hackathons', 'Hackathon management endpoints')
     .addTag('users', 'User management endpoints')
     .addServer('https://espritmobile.com/hackathon', 'Production API (via nginx)')
-    .addServer('http://localhost:3005', 'Direct API access')
+    .addServer('http://localhost:3005/api', 'Direct API access')
     .build();
   
   const document = SwaggerModule.createDocument(app, config);
