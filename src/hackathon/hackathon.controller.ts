@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, StreamableFile, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, StreamableFile, NotFoundException, Res } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
@@ -108,12 +108,39 @@ export class HackathonController {
   @ApiParam({ name: 'filename', description: 'Image filename', example: '230b5bef3addc32e3101fe73858a49dd1.webp' })
   @ApiResponse({ status: 200, description: 'Image file' })
   @ApiResponse({ status: 404, description: 'Image not found' })
-  getImage(@Param('filename') filename: string): StreamableFile {
+  getImage(@Param('filename') filename: string, @Res() res: any): void {
     try {
-      const file = createReadStream(join(process.cwd(), 'uploads', filename));
-      return new StreamableFile(file);
+      const filePath = join(process.cwd(), 'uploads', filename);
+      const file = createReadStream(filePath);
+      
+      // Set proper headers for image display
+      res.set({
+        'Content-Type': this.getContentType(filename),
+        'Content-Disposition': 'inline', // This tells the browser to display the image
+        'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
+      });
+      
+      file.pipe(res);
     } catch (error) {
+      console.log(error);
       throw new NotFoundException('Image not found');
+    }
+  }
+
+  private getContentType(filename: string): string {
+    const ext = filename.toLowerCase().split('.').pop();
+    switch (ext) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'webp':
+        return 'image/webp';
+      default:
+        return 'application/octet-stream';
     }
   }
 
