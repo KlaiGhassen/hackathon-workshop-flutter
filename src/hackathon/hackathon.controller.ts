@@ -122,7 +122,7 @@ export class HackathonController {
   @ApiResponse({ status: 200, description: 'List of all hackathons', type: [Hackathon] })
   async findAll(): Promise<Hackathon[]> {
     const hackathons = await this.hackathonService.findAll();
-    const baseUrl = process.env.API_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.API_BASE_URL || 'https://espritmobile.com/api-hackathon';
     
     return hackathons.map(hackathon => {
       const hackathonObj = (hackathon as any).toObject ? (hackathon as any).toObject() : hackathon;
@@ -140,7 +140,7 @@ export class HackathonController {
   @ApiResponse({ status: 404, description: 'Hackathon not found' })
   async findOne(@Param('id') id: string): Promise<Hackathon> {
     const hackathon = await this.hackathonService.findOne(id);
-    const baseUrl = process.env.API_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.API_BASE_URL || 'https://espritmobile.com/api-hackathon';
     
     const hackathonObj = (hackathon as any).toObject ? (hackathon as any).toObject() : hackathon;
     return {
