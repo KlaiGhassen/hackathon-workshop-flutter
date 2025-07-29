@@ -16,8 +16,7 @@ async function bootstrap() {
     credentials: true,
   });
   
-  // Set global prefix for all routes
-  app.setGlobalPrefix('api');
+ 
   
   app.useGlobalPipes(new ValidationPipe());
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
@@ -31,12 +30,12 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('hackathons', 'Hackathon management endpoints')
     .addTag('users', 'User management endpoints')
-    .addServer('https://espritmobile.com/hackathon', 'Production API')
+    .addServer('https://espritmobile.com/hackathon', 'Production API (via nginx)')
     .addServer('http://localhost:3005', 'Direct API access')
     .build();
   
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document, {
+  SwaggerModule.setup('', app, document, {
     swaggerOptions: {
       persistAuthorization: true,
     },
