@@ -28,7 +28,6 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('hackathons', 'Hackathon management endpoints')
     .addTag('users', 'User management endpoints')
-    .addBearerAuth()
     .addServer('https://espritmobile.com/hackathon', 'Production API')
     .addServer('http://localhost:3005', 'Direct API access')
     .build();
