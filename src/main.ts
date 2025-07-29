@@ -29,10 +29,16 @@ async function bootstrap() {
     .addTag('hackathons', 'Hackathon management endpoints')
     .addTag('users', 'User management endpoints')
     .addBearerAuth()
+    .addServer('https://espritmobile.com/hackathon', 'Production API')
+    .addServer('http://localhost:3005', 'Direct API access')
     .build();
   
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
