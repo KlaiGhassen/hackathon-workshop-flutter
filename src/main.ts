@@ -16,6 +16,9 @@ async function bootstrap() {
     credentials: true,
   });
   
+  // Set global prefix for all routes
+  app.setGlobalPrefix('api');
+  
   app.useGlobalPipes(new ValidationPipe());
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads/',
