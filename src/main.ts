@@ -17,7 +17,6 @@ async function bootstrap() {
   });
   
   // Set global prefix to match nginx proxy_pass
-  app.setGlobalPrefix('api');
   
   app.useGlobalPipes(new ValidationPipe());
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
@@ -38,7 +37,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/api', app, document, {
     swaggerOptions: {
-      persistAuthorization: true,
+      persistAuthorization: false,
     },
   });
 
